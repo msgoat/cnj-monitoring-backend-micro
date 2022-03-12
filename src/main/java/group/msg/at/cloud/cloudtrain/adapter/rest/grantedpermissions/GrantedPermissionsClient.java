@@ -1,5 +1,7 @@
 package group.msg.at.cloud.cloudtrain.adapter.rest.grantedpermissions;
 
+import group.msg.at.cloud.common.observability.rest.trace.RestTraceClientRequestFilter;
+import group.msg.at.cloud.common.observability.rest.trace.RestTraceClientResponseFilter;
 import group.msg.at.cloud.common.rest.jwt.JwtPropagatingClientRequestFilter;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -7,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
+import org.eclipse.microprofile.rest.client.annotation.RegisterProviders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import java.util.List;
@@ -24,7 +27,11 @@ import java.util.List;
  * </p>
  */
 @RegisterRestClient(configKey = "cloudtrain.services.grantedpermissions")
-@RegisterProvider(JwtPropagatingClientRequestFilter.class)
+@RegisterProviders({
+        @RegisterProvider(JwtPropagatingClientRequestFilter.class),
+        @RegisterProvider(RestTraceClientRequestFilter.class),
+        @RegisterProvider(RestTraceClientResponseFilter.class)
+})
 @Path("api/v1/grantedPermissions")
 public interface GrantedPermissionsClient {
 
