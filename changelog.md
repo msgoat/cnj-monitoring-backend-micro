@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.2.0] - 2022-08-12
+### Changed
+- consolidated application-specific prometheus metric names with other showcases
+
 ## [5.1.0] - 2021-11-11
 ### Added
 ### Changed
