@@ -35,7 +35,7 @@ container:
         memory: 1Gi
       requests:
         cpu: 250m
-        memory: 756Mi
+        memory: 1Gi
     securityContext:
       capabilities:
         drop:
@@ -51,8 +51,8 @@ service:
 
 ingress:
   enabled: true
-  class: traefik
-  type: traefik
+  class: nginx
+  type: nginx
   host: "${k8s.ingress.host}"
   path: "${k8s.ingress.path}"
   pathType: Prefix
@@ -85,8 +85,8 @@ podDisruptionBudget:
 # security configuration (Open ID Connect)
 security:
   oidc:
-    jwksUri: "https://oidc.cloudtrain.aws.msgoat.eu/auth/realms/cloudtrain/protocol/openid-connect/certs"
-    issuer: "https://oidc.cloudtrain.aws.msgoat.eu/auth/realms/cloudtrain"
+    jwksUri: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain/protocol/openid-connect/certs"
+    issuer: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain"
 
 # downstream service configuration
 downstream:

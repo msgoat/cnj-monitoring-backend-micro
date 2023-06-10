@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jre-alpine
+FROM docker.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-docker-jre17-alpine:latest
 
 LABEL maintainer="michael.theis@msg.group"
 LABEL ${project.groupId}.${project.artifactId}.project="CloudTrain"
@@ -10,27 +10,22 @@ ARG ARG_JAVA_APPLICATION_HOME=/home/payara
 
 ENV JAVA_APPLICATION=${ARG_JAVA_APPLICATION} \
     JAVA_APPLICATION_HOME=${ARG_JAVA_APPLICATION_HOME} \
-    JAVA_OPTS="-XshowSettings:vm -XX:+UseG1GC -XX:MetaspaceSize=256m -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled" \
+    JAVA_OPTS="-XshowSettings:vm -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled" \
     EXT_JAVA_OPTS="" \
-    DOCKER_JAVA_OPTS="-XX:+UseContainerSupport -XX:InitialRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0" \
-    PAYARA_JAVA_OPTS="" \
+    AGENT_JAVA_OPTS="" \
+    DOCKER_JAVA_OPTS="-XX:InitialRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0" \
+    PAYARA_JAVA_OPTS="-Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts" \
     PAYARA_ARGUMENTS="--disablephonehome --enablehealthcheck true --nocluster --nohostaware" \
-    PAYARA_LOGGING_FORMAT="JSON" \
-    WAIT_FOR_URLS="" \
-    WAIT_FOR_ARGUMENTS="-i 5"
+    PAYARA_LOGGING_FORMAT="JSON"
 
 EXPOSE 8080
 
-RUN echo "install missing tool netstat to be able to wait for PostgreSQL" && \
-    apk update && \
-    apk add netcat-openbsd && \
-    echo "adding run user payara to system" && \
+RUN echo "adding run user payara to system" && \
     addgroup --gid 1000 --system payara && \
     adduser -S -D -G payara -u 1000 payara
 
 # copy entrypoint script
 COPY docker-entrypoint.sh /
-COPY wait-for.sh ${ARG_JAVA_APPLICATION_HOME}/
 
 # copy all build artifacts into application home folder
 COPY *.jar ${ARG_JAVA_APPLICATION_HOME}/
@@ -41,7 +36,6 @@ COPY logging*.properties ${ARG_JAVA_APPLICATION_HOME}/
 RUN echo "allow non-root user to access and execute all copied files" && \
     chown payara:payara /docker-entrypoint.sh && \
     chmod u+x /docker-entrypoint.sh && \
-    chmod u+x ${ARG_JAVA_APPLICATION_HOME}/wait-for.sh && \
     chown -R payara:payara ${ARG_JAVA_APPLICATION_HOME}
 
 # use user ID instead of user name to allow kubernetes to check non-root users

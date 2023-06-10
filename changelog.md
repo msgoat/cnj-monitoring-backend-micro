@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.0.0] - 2023-06-09
+### Changed
+- moved to new AWS CodeBuild build pipeline
+- moved to new CloudTrain EKS cluster
+- upgraded everything
+- added docker-compose.yml to run the showcase locally
+
 ## [5.2.0] - 2022-08-12
 ### Changed
 - consolidated application-specific prometheus metric names with other showcases
