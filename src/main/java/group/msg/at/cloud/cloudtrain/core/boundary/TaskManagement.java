@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.metrics.annotation.Counted;
-import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public class TaskManagement {
             description = BUSINESS_OPERATION_METRIC_COUNT_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_add"})
-    @SimplyTimed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
+    @Timed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
             description = BUSINESS_OPERATION_METRIC_TIME_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_add"},
@@ -50,7 +50,7 @@ public class TaskManagement {
             description = BUSINESS_OPERATION_METRIC_COUNT_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_modify"})
-    @SimplyTimed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
+    @Timed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
             description = BUSINESS_OPERATION_METRIC_TIME_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_modify"},
@@ -64,7 +64,7 @@ public class TaskManagement {
             description = BUSINESS_OPERATION_METRIC_COUNT_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_get"})
-    @SimplyTimed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
+    @Timed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
             description = BUSINESS_OPERATION_METRIC_TIME_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_get"},
@@ -78,7 +78,7 @@ public class TaskManagement {
             description = BUSINESS_OPERATION_METRIC_COUNT_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_delete"})
-    @SimplyTimed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
+    @Timed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
             description = BUSINESS_OPERATION_METRIC_TIME_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_delete"},
@@ -92,7 +92,7 @@ public class TaskManagement {
             description = BUSINESS_OPERATION_METRIC_COUNT_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_browse"})
-    @SimplyTimed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
+    @Timed(name = BUSINESS_OPERATION_METRIC_TIME_NAME,
             description = BUSINESS_OPERATION_METRIC_TIME_DESCRIPTION,
             absolute = true,
             tags = {BUSINESS_OPERATION_NAME_TAG + "=task_browse"},

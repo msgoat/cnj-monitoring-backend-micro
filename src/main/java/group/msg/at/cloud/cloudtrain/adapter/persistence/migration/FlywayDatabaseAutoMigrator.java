@@ -1,11 +1,10 @@
 package group.msg.at.cloud.cloudtrain.adapter.persistence.migration;
 
-import org.flywaydb.core.Flyway;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
 

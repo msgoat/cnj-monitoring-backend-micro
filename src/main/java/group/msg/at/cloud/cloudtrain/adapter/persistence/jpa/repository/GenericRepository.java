@@ -1,7 +1,6 @@
 package group.msg.at.cloud.cloudtrain.adapter.persistence.jpa.repository;
 
 import group.msg.at.cloud.common.persistence.jpa.repository.AbstractGenericRepository;
-
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

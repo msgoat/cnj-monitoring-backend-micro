@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    CNJ_ARTIFACT_ID: cnj-monitoring-backend-micro
+    CNJ_ARTIFACT_ID: cnj-monitorin-backend-micro
   parameter-store:
     CLOUDTRAIN_EKS_DEPLOY_ENABLED: "CLOUDTRAIN_CODEBUILD_EKS_DEPLOY_ENABLED"
     CLOUDTRAIN_EKS_CLUSTER_NAME: "CLOUDTRAIN_CODEBUILD_EKS_CLUSTER_NAME"
@@ -11,6 +11,7 @@ env:
     CLOUDTRAIN_EKS_CLUSTER_ROUTE: "CLOUDTRAIN_CODEBUILD_EKS_CLUSTER_ROUTE"
     CLOUDTRAIN_CODEBUILD_GIT_TAG_USER: "CLOUDTRAIN_CODEBUILD_GIT_TAG_USER"
     CLOUDTRAIN_CODEBUILD_GIT_TAG_EMAIL: "CLOUDTRAIN_CODEBUILD_GIT_TAG_EMAIL"
+    CLOUDTRAIN_CODEBUILD_OWASP_SCAN_SKIPPED: "CLOUDTRAIN_CODEBUILD_OWASP_SCAN_SKIPPED"
   secrets-manager:
     NEXUS_USER: "cloudtrain-codebuild-nexus:user"
     NEXUS_PASSWORD: "cloudtrain-codebuild-nexus:password"
@@ -25,6 +26,7 @@ env:
     TEST_OIDC_CLIENT_ACCESS_TOKEN_URI: "cloudtrain-codebuild-common-test:test.oidc.client.accessTokenUri"
     TEST_OIDC_CLIENT_USER: "cloudtrain-codebuild-common-test:test.oidc.client.user"
     TEST_OIDC_CLIENT_PASSWORD: "cloudtrain-codebuild-common-test:test.oidc.client.password"
+    NIST_NVD_API_KEY: "cloudtrain-codebuild-nvd-api-key:apiKey"
 
 phases:
   install:
@@ -35,6 +37,9 @@ phases:
       - aws s3 cp s3://s3-eu-west-1-cloudtrain-codebuild-shared/cloudtrain-codebuild-install.sh ~/
       - chmod u+x ~/cloudtrain-codebuild-install.sh
       - ~/cloudtrain-codebuild-install.sh
+      - echo "Install JDK 21"
+      - yum install -y java-21-amazon-corretto-headless
+      - export JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.x86_64
   pre_build:
     on-failure: ABORT
     commands:
@@ -54,7 +59,7 @@ phases:
       - export VERSION_SHA1=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}
       - export PROJECT_VERSION=$VERSION_REVISION.$VERSION_CHANGELIST.$VERSION_SHA1
       - echo "Running commit-stage of the build on version [$PROJECT_VERSION]"
-      - mvn clean deploy -f pom.xml -B -ff -e -V -U -P commit-stage -Dchangelist=.$VERSION_CHANGELIST -Dsha1=.$VERSION_SHA1 -Dsonar.login=$SONARQUBE_TOKEN
+      - mvn clean deploy -f pom.xml -B -ff -e -V -U -P commit-stage -Dchangelist=.$VERSION_CHANGELIST -Dsha1=.$VERSION_SHA1 -Dsonar.token=$SONARQUBE_TOKEN -Ddependency-check.skip=$CLOUDTRAIN_CODEBUILD_OWASP_SCAN_SKIPPED
       - |-
         if [ "$CLOUDTRAIN_EKS_DEPLOY_ENABLED" == "true" ]
         then
