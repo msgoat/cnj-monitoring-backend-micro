@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    CNJ_ARTIFACT_ID: cnj-monitorin-backend-micro
+    CNJ_ARTIFACT_ID: cnj-monitoring-backend-micro
   parameter-store:
     CLOUDTRAIN_EKS_DEPLOY_ENABLED: "CLOUDTRAIN_CODEBUILD_EKS_DEPLOY_ENABLED"
     CLOUDTRAIN_EKS_CLUSTER_NAME: "CLOUDTRAIN_CODEBUILD_EKS_CLUSTER_NAME"
@@ -52,13 +52,12 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Running phase build"
-      - export BRANCH=main
       - export GIT_BRANCH=${CODEBUILD_WEBHOOK_HEAD_REF:11}
       - export VERSION_REVISION=$(grep -m 1 '<revision>' pom.xml | cut -d '<' -f2  | cut -d '>' -f2)
       - export VERSION_CHANGELIST=${GIT_BRANCH:-main}
       - export VERSION_SHA1=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}
       - export PROJECT_VERSION=$VERSION_REVISION.$VERSION_CHANGELIST.$VERSION_SHA1
-      - echo "Running commit-stage of the build on version [$PROJECT_VERSION]"
+      - echo "Running commit-stage of the build on version [$PROJECT_VERSION] with revision [$VERSION_REVISION] changelist [$VERSION_CHANGELIST] and sha1 [$VERSION_SHA1]"
       - mvn clean deploy -f pom.xml -B -ff -e -V -U -P commit-stage -Dchangelist=.$VERSION_CHANGELIST -Dsha1=.$VERSION_SHA1 -Dsonar.token=$SONARQUBE_TOKEN -Ddependency-check.skip=$CLOUDTRAIN_CODEBUILD_OWASP_SCAN_SKIPPED
       - |-
         if [ "$CLOUDTRAIN_EKS_DEPLOY_ENABLED" == "true" ]
@@ -67,7 +66,7 @@ phases:
           aws eks update-kubeconfig --name $CLOUDTRAIN_EKS_CLUSTER_NAME
           kubectl cluster-info
           echo "Running integration-test-stage of the build"
-          mvn clean verify -f pom.xml -B -ff -e -V -U -P integration-test-stage -Dchangelist=.$BRANCH -Dsha1=.${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8} -Dk8s.cluster.route=$CLOUDTRAIN_EKS_CLUSTER_ROUTE -Dk8s.cluster.namespace=$CLOUDTRAIN_EKS_NAMESPACE -Dk8s.ingress.host=$CLOUDTRAIN_EKS_INGRESS_HOST
+          mvn clean verify -f pom.xml -B -ff -e -V -U -P integration-test-stage -Dchangelist=.$VERSION_CHANGELIST -Dsha1=.$VERSION_SHA1 -Dk8s.cluster.route=$CLOUDTRAIN_EKS_CLUSTER_ROUTE -Dk8s.cluster.namespace=$CLOUDTRAIN_EKS_NAMESPACE -Dk8s.ingress.host=$CLOUDTRAIN_EKS_INGRESS_HOST
         fi
       - echo "Tagging branch [$VERSION_CHANGELIST] with git tag [$PROJECT_VERSION] on behalf of CodeBuild initiator [$CODEBUILD_INITIATOR] and GitHub actor [$CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID]"
       - git config user.name "$CLOUDTRAIN_CODEBUILD_GIT_TAG_USER"
