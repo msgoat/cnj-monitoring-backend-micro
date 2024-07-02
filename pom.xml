@@ -442,9 +442,6 @@
                     <excludes>
                         <exclude>**/*SystemTest.java</exclude>
                     </excludes>
-                    <configuration>
-                        <skipTests>true</skipTests>
-                    </configuration>
                 </configuration>
             </plugin>
             <plugin>
